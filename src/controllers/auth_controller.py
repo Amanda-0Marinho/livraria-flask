@@ -80,3 +80,21 @@ def login(data):
     )
 
     return jsonify({"token": token})
+
+
+@login_required
+def delete_user(data, user_id):
+    target = User.query.get(user_id)
+
+    if not target:
+        return jsonify({"error": "Usuário não encontrado"}), 404
+
+    requester = User.query.get(data["user_id"])
+
+    if requester.role != "admin" and target.role == "admin":
+        return jsonify({"error": "Usuário não pode deletar admin"}), 403
+
+    db.session.delete(target)
+    db.session.commit()
+
+    return jsonify({"message": "Usuário deletado"})
