@@ -8,9 +8,18 @@ from functools import wraps
 
 
 def decode_token():
-    token = request.headers.get("Authorization")
-    if not token:
+    header = request.headers.get("Authorization")
+
+    if not header:
         return None, jsonify({"error": "Token obrigatório"}), 401
+
+    parts = header.split()
+
+    if len(parts) == 2 and parts[0].lower() == "bearer":
+        token = parts[1]
+    else:
+        token = header
+
     try:
         data = jwt.decode(token, Config.SECRET_KEY, algorithms=["HS256"])
         return data, None, None

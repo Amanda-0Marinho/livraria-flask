@@ -5,7 +5,7 @@ from src.models.reservation import Reservation
 from src.routes.auth_routes import login_required, admin_required
 
 
-@login_required
+@admin_required
 def create_book(data, req):
     if not req.get("title"):
         return jsonify({"error": "Título obrigatório"}), 400
